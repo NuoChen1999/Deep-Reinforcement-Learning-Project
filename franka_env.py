@@ -8,8 +8,24 @@ import time
 class FrankaReachEnv(gym.Env):
     def __init__(self, render=False):
         self.render = render
+        self.target_pos = np.array([0.5, 0.0, 0.4])  # x, y, z
+
         if self.render:
             self.physicsClient = p.connect(p.GUI)
+
+            # create a red sphere visual shape
+            sphere_vis = p.createVisualShape(
+                shapeType=p.GEOM_SPHERE,
+                radius=0.03,
+                rgbaColor=[1, 0, 0, 0.8]
+            )
+            # spawn it at the goal location with no mass (so it doesn’t fall)
+            self._target_id = p.createMultiBody(
+                baseMass=0,
+                baseVisualShapeIndex=sphere_vis,
+                basePosition=self.target_pos
+            )            
+
         else:
             self.physicsClient = p.connect(p.DIRECT)
 
@@ -21,7 +37,6 @@ class FrankaReachEnv(gym.Env):
         self.step_count = 0
 
         self.robot_id = None
-        self.target_pos = np.array([0.5, 0.0, 0.4])  # x, y, z
 
         # Action: 7 joint delta positions
         self.action_space = spaces.Box(low=-0.05, high=0.05, shape=(7,), dtype=np.float32)
@@ -36,6 +51,19 @@ class FrankaReachEnv(gym.Env):
     def reset(self, seed=None, options=None):
         p.resetSimulation()
         self.step_count = 0
+
+        if self.render:
+            sphere_vis = p.createVisualShape(
+                shapeType=p.GEOM_SPHERE,
+                radius=0.03,
+                rgbaColor=[1, 0, 0, 0.8]
+            )
+            # keep the ID around in case you want to remove or move it later
+            self._target_body_id = p.createMultiBody(
+                baseMass=0,
+                baseVisualShapeIndex=sphere_vis,
+                basePosition=self.target_pos.tolist()
+            )
 
         plane = p.loadURDF("plane.urdf")
         self.robot_id = p.loadURDF("franka_panda/panda.urdf", useFixedBase=True)
