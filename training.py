@@ -1,17 +1,16 @@
-#from stable_baselines3 import PPO
-from stable_baselines3 import DDPG
+from stable_baselines3 import PPO, SAC, DDPG
 from franka_env import FrankaReachEnv
 from matplotlib import pyplot as plt
 
 env = FrankaReachEnv(render=False)
 
-model = DDPG("MlpPolicy", env, verbose=1, tensorboard_log="./ppo_franka_tensorboard/", device="cpu")
-model.learn(total_timesteps=100_000)
+model = SAC("MlpPolicy", env, verbose=1, tensorboard_log="./sac_franka_tensorboard/", device="cpu")
+model.learn(total_timesteps=100000)
 
 
 obs, _ = env.reset()
 rewards = []
-for _ in range(100):
+for _ in range(10000):
     action, _ = model.predict(obs, deterministic=True)
     obs, reward, done, _, _ = env.step(action)
     rewards.append(reward)
@@ -26,4 +25,4 @@ plt.plot(rewards)
 plt.title("Rewards over time")
 plt.xlabel("Step")
 plt.ylabel("Reward")
-plt.show()
+plt.savefig("rewards_plot_SAC.png")
