@@ -17,8 +17,8 @@ class FrankaReachEnv(gym.Env):
         self.target_pos = np.array([0.5, 0.0, 0.6]) # target position in cartesian space
         self.target_ori_euler = p.getQuaternionFromEuler([0, np.pi, 0]) # target orientation in cartesian space
         self.action_space = spaces.Box(low=-1, high=1, shape=(7,), dtype=np.float32)
-        obs_low = np.array([-np.pi] * 7 + [-2, -2, 0])
-        obs_high = np.array([np.pi] * 7 + [2, 2, 2])
+        obs_low = np.array([-np.pi] * 7 + [-10.0] * 7 + [-2, -2, 0])
+        obs_high = np.array([np.pi] * 7 + [10.0] * 7 + [2, 2, 2])
         self.observation_space = spaces.Box(low=obs_low, high=obs_high, dtype=np.float32)
 
     def reset(self, seed=None, options=None):
@@ -70,7 +70,7 @@ class FrankaReachEnv(gym.Env):
             'ee_ori_euler': np.array(ee_ori_euler),
             'coriolis_gravity': np.array(coriolis_gravity[:7]),
             # 'flat_obs': np.array(joint_positions[:7] + list(ee_pos) + list(ee_ori_euler), dtype=np.float32)
-            'flat_obs': np.array(joint_positions[:7] + list(ee_pos), dtype=np.float32)
+            'flat_obs': np.array(joint_positions[:7] + joint_velocities[:7] + list(ee_pos), dtype=np.float32)
         }
 
         return obs
@@ -113,10 +113,10 @@ class FrankaReachEnv(gym.Env):
 
         # Controller
         # Kp = np.array([600.0, 600.0, 600.0, 600.0, 250.0, 150.0, 50.0])
-        Kp = np.array([60.0, 60.0, 60.0, 60.0, 25.0, 15.0, 5.0])
+        #Kp = np.array([60.0, 60.0, 60.0, 60.0, 25.0, 15.0, 5.0])
         Kd = np.array([5.0, 5.0, 5.0, 5.0, 3.0, 2.5, 1.5])
         Krl = np.array([20.0, 20.0, 20.0, 20.0, 20.0, 20.0, 1.0])
-        tau = np.array(coriolis_gravity)[:7] - Kp * error_q - Kd * error_q_dot + Krl * action
+        tau = np.array(coriolis_gravity)[:7] - Kd * error_q_dot + Krl * action
         # print(action)
         joint_indices = np.array([0, 1, 2, 3, 4, 5, 6])
         p.setJointMotorControlArray(

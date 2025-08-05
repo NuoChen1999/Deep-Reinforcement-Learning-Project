@@ -3,7 +3,7 @@ from franka_env import FrankaReachEnv
 from matplotlib import pyplot as plt
 
 env = FrankaReachEnv(render=False)
-model = DDPG("MlpPolicy", env, verbose=1, tensorboard_log="./sac_franka_tensorboard/", device="cpu")
+model = SAC("MlpPolicy", env, verbose=1, tensorboard_log="./sac_franka_tensorboard/", device="cpu")
 model.learn(total_timesteps=100000)
 
 
@@ -24,4 +24,4 @@ plt.plot(rewards)
 plt.title("Rewards over time")
 plt.xlabel("Step")
 plt.ylabel("Reward")
-plt.savefig("rewards_plot_DDPG.png")
+plt.savefig("rewards_plot_SAC.png")
