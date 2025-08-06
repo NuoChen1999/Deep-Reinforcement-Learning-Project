@@ -36,6 +36,7 @@ plt.savefig("rewards_plot_PPO.png")
 
 # plot the end-effector positions
 target_pos = np.array([0.5, 0.0, 0.6])
+"""
 plt.figure(figsize=(14,6))
 plt.rcParams.update({
     "font.size": 12,
@@ -43,6 +44,8 @@ plt.rcParams.update({
     "axes.labelsize": 13,
     "legend.fontsize": 11,
 })
+"""
+plt.figure()
 plt.grid(True, linestyle=':', alpha=0.7)
 plt.plot(np.array(ee_positions)[:,0], label=['Real x'])
 plt.plot(np.array(ee_positions)[:,1], label=['Real y'])

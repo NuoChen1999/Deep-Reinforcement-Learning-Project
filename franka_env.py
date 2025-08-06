@@ -114,9 +114,9 @@ class FrankaReachEnv(gym.Env):
         # Controller
         # Kp = np.array([600.0, 600.0, 600.0, 600.0, 250.0, 150.0, 50.0])
         #Kp = np.array([60.0, 60.0, 60.0, 60.0, 25.0, 15.0, 5.0])
-        Kd = np.array([5.0, 5.0, 5.0, 5.0, 3.0, 2.5, 1.5])
+        #Kd = np.array([5.0, 5.0, 5.0, 5.0, 3.0, 2.5, 1.5])
         Krl = np.array([20.0, 20.0, 20.0, 20.0, 20.0, 20.0, 1.0])
-        tau = np.array(coriolis_gravity)[:7] - Kd * error_q_dot + Krl * action
+        tau = np.array(coriolis_gravity)[:7] + Krl * action
         # print(action)
         joint_indices = np.array([0, 1, 2, 3, 4, 5, 6])
         p.setJointMotorControlArray(
